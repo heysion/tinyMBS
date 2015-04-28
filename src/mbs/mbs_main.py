@@ -27,7 +27,7 @@ class PushMsgHandler(tornado.web.RequestHandler):
             func(self)
         return fn
 
-    def __request2json(func):
+    def http_buffer_to_json(func):
         def fn(self):
             if len(self.request.body):
                 try:
@@ -52,7 +52,7 @@ class PushMsgHandler(tornado.web.RequestHandler):
                     print "ending"
         return fn
 
-    @__request2json
+    @http_buffer_to_json
     @init_db_redis
     def post(self):
         print self.req_json_packet
@@ -78,19 +78,6 @@ class GetMsgHandler(tornado.web.RequestHandler):
         def fn(self):
             self.db = redis.Redis(connection_pool=self.application.pool)
             func(self)
-        return fn
-
-    def __request2json(func):
-        def fn(self):
-            if len(self.request.body):
-                try:
-                    self.req_json_packet = json.loads(self.request.body)
-                except ValueError, e:
-                    print e
-                else:
-                    print self.req_json_packet
-                    print "ending"
-                    func(self)
         return fn
 
     @init_db_redis
