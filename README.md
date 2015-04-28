@@ -28,3 +28,32 @@ apt-get install redis-server
 -----tests #测试代码
 -doc #文档
 ```
+
+## 接口
+
+### 推送数据 pushmsg
+
+```
+api : /pushmsg
+param :
+c_code 接收客户端 recv code
+c_msg 消息  msg
+return msgid
+```
+
+### 获取消息 listmsg
+
+```
+api: /listmsgs
+param : client_code 接收客户端 recv code
+return msglist
+```
+
+### 查询消息 getmsg
+
+```
+api: /getmsg/([0-9]+)
+param : msgid
+return msginfo
+```
+
