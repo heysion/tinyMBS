@@ -42,14 +42,11 @@ class PushMsgHandler(tornado.web.RequestHandler):
                     print e
                 except KeyError, e:
                     self.no_error = False
-                    print e
                 except AttributeError , e:
                     self.no_error = False
-                    print e
                 finally:
                     func(self)
                     print self.req_json_packet
-                    print "ending"
         return fn
 
     @http_buffer_to_json
@@ -59,11 +56,9 @@ class PushMsgHandler(tornado.web.RequestHandler):
         if not self.no_error :
             data = {'retcode':404,'retmsg':'not found'}
             data_json = json.dumps(data)
-            print data_json
             self.write(data_json)
         else:
             self.req_json_packet['c_id'] = self.db.incr('tinymbs:msgid')
-            print self.req_json_packet['c_id']
             self.db.lpush('tinymbs:channel:%s'%(self.req_json_packet['c_code']),"%s"%(self.req_json_packet))
             self.db.set('tinymbs:msgbox:%s'%(self.req_json_packet['c_id']),"%s"%(self.req_json_packet))
             self.write(self.req_json_packet)
@@ -100,7 +95,6 @@ class GetMsgHandler(tornado.web.RequestHandler):
                 data_json = json.dumps(data)
                 print data_json
                 self.write(data_json)
-                return
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()
