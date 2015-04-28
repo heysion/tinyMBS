@@ -12,7 +12,7 @@ define("port", default=8000, help="run on the given port", type=int)
 class RunMain(tornado.web.Application):
     def __init__(self):
         self.pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
-        handlers = [(r"/pushmsg", PushMsgHandler),(r"/listmsgs", GetMsgHandler)]
+        handlers = [(r"/pushmsg", PushMsgHandler),(r"/listmsgs", ListMsgHandler),(r'/getmsg/([0-9]+)',GetMsgHandler)]
         tornado.web.Application.__init__(self, handlers, debug=True)
 
 class IndexHandler(tornado.web.RequestHandler):
@@ -68,7 +68,7 @@ class PushMsgHandler(tornado.web.RequestHandler):
         data_json = json.dumps(data)
         self.write(data_json)
 
-class GetMsgHandler(tornado.web.RequestHandler):
+class ListMsgHandler(tornado.web.RequestHandler):
     def init_db_redis(func):
         def fn(self):
             self.db = redis.Redis(connection_pool=self.application.pool)
@@ -88,6 +88,33 @@ class GetMsgHandler(tornado.web.RequestHandler):
             ret = self.db.exists('tinymbs:channel:%s'%(client_code))
             if ret:
                 ret_list = self.db.lrange('tinymbs:channel:%s'%(client_code),0,10)
+                ret_data = json.dumps(ret_list)
+                self.write(ret_data)
+            else:
+                data = {'retcode':404,'retmsg':'not found'}
+                data_json = json.dumps(data)
+                print data_json
+                self.write(data_json)
+
+class GetMsgHandler(tornado.web.RequestHandler):
+    def init_db_redis(func):
+        def fn(self,input):
+            self.db = redis.Redis(connection_pool=self.application.pool)
+            func(self,input)
+        return fn
+
+    @init_db_redis
+    def get(self,msgid):
+        if not msgid > 0 :
+            data = {'retcode':404,'retmsg':'not found'}
+            data_json = json.dumps(data)
+            print data_json
+            self.write(data_json)
+            return
+        else:
+            ret = self.db.exists('tinymbs:msgbox:%s'%(msgid))
+            if ret:
+                ret_list = self.db.get('tinymbs:msgbox:%s'%(msgid))
                 ret_data = json.dumps(ret_list)
                 self.write(ret_data)
             else:
