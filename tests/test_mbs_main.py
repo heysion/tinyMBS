@@ -15,7 +15,6 @@ def test_mbs_main_post():
     data = {'c_code' : 'applist','c_msg':'abc','c_id':0}
     jdata = json.dumps(data)
     print jdata
-#    http_request.add_data(data)
     http_request = urllib2.Request(http_url,jdata)
     http_response = urllib2.urlopen(http_request)
     print http_response.read()
@@ -23,7 +22,6 @@ def test_mbs_main_post():
 
 def test_mbs_main_get():
     http_url = "http://127.0.0.1:8000/listmsgs?client_code=applist"
-#    http_request = urllib2.Request(http_url,jdata)
     http_response = urllib2.urlopen(http_url)
     print http_response.read()
     http_response.close()
