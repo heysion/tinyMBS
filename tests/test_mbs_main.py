@@ -20,6 +20,12 @@ def test_mbs_main_post():
     print http_response.read()
     http_response.close()
 
+def test_mbs_main_list():
+    http_url = "http://127.0.0.1:8000/listmsgs?client_code=applist"
+    http_response = urllib2.urlopen(http_url)
+    print http_response.read()
+    http_response.close()
+
 def test_mbs_main_get():
     http_url = "http://127.0.0.1:8000/listmsgs?client_code=applist"
     http_response = urllib2.urlopen(http_url)
@@ -28,7 +34,7 @@ def test_mbs_main_get():
 
 if __name__ == "__main__":
     test_mbs_main_post()
-    
+
 # req = urllib2.Request(url, data, {'Content-Type': 'application/json'})
 # f = urllib2.urlopen(req)
 # response = f.read()
